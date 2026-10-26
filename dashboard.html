@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MedCove &mdash; Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <header class="topbar">
+    <span class="mark"><span class="mark-dot"></span> MedCove</span>
+    <div class="user-chip">
+      <div class="avatar" id="userAvatar">?</div>
+      <div>
+        <span class="name" id="userName">&nbsp;</span>
+        <span class="role" id="userRole">&nbsp;</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidenav" aria-label="Sections">
+      <button data-panel="overview" class="active"><span class="ico">&#9673;</span> Overview</button>
+      <button data-panel="register"><span class="ico">&#128100;</span> Register patient</button>
+      <button data-panel="schedule"><span class="ico">&#128197;</span> Schedule visit</button>
+      <button data-panel="appointments"><span class="ico">&#128203;</span> Appointments</button>
+    </nav>
+
+    <main class="main">
+
+      <!-- OVERVIEW -->
+      <section class="panel active" id="panel-overview">
+        <div class="panel-header">
+          <div>
+            <h2>Overview</h2>
+            <span class="desc">Snapshot of today's registrations and scheduling activity.</span>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><b id="statPatients">0</b><span id="statPatientsLabel">Registered patients</span></div>
+          <div class="stat-card"><b id="statAppointments">0</b><span id="statAppointmentsLabel">Total appointments</span></div>
+          <div class="stat-card"><b id="statUpcoming">0</b><span id="statUpcomingLabel">Scheduled (upcoming)</span></div>
+          <div class="stat-card"><b id="statCancelled">0</b><span id="statCancelledLabel">Cancelled</span></div>
+        </div>
+        <svg class="pulse-line" viewBox="0 0 300 28" preserveAspectRatio="none" style="color:var(--color-line)">
+          <path d="M0 14 H100 L112 2 L124 26 L136 14 H300" />
+        </svg>
+      </section>
+
+      <!-- REGISTER / OWN PATIENT RECORD -->
+      <section class="panel" id="panel-register">
+        <div class="panel-header">
+          <div>
+            <h2 id="registerHeading">Register a patient</h2>
+            <span class="desc" id="registerDesc">Creates a new patient record via the patient registration API.</span>
+          </div>
+        </div>
+
+        <div class="card" id="registerFormCard">
+          <div class="banner banner-error" id="registerBanner" role="alert"></div>
+          <form id="registerForm" novalidate>
+            <div class="form-grid">
+              <div class="field" id="reg-name-field">
+                <label for="reg-name">Full name</label>
+                <input type="text" id="reg-name" placeholder="Jane Doe" />
+                <span class="error-msg">Enter the patient's full name.</span>
+              </div>
+              <div class="field" id="reg-age-field">
+                <label for="reg-age">Age</label>
+                <input type="number" id="reg-age" min="0" max="120" placeholder="34" />
+                <span class="error-msg">Enter a valid age (0&ndash;120).</span>
+              </div>
+              <div class="field" id="reg-gender-field">
+                <label for="reg-gender">Gender</label>
+                <select id="reg-gender">
+                  <option value="">Select&hellip;</option>
+                  <option>Female</option>
+                  <option>Male</option>
+                  <option>Non-binary</option>
+                  <option>Prefer not to say</option>
+                </select>
+                <span class="error-msg">Please select a gender.</span>
+              </div>
+              <div class="field" id="reg-blood-field">
+                <label for="reg-blood">Blood group</label>
+                <select id="reg-blood">
+                  <option value="">Select&hellip;</option>
+                  <option>A+</option><option>A-</option>
+                  <option>B+</option><option>B-</option>
+                  <option>O+</option><option>O-</option>
+                  <option>AB+</option><option>AB-</option>
+                </select>
+              </div>
+              <div class="field" id="reg-phone-field">
+                <label for="reg-phone">Phone number</label>
+                <input type="tel" id="reg-phone" placeholder="+91 98765 43210" />
+                <span class="error-msg">Enter a valid phone number.</span>
+              </div>
+              <div class="field" id="reg-email-field">
+                <label for="reg-email">Email (optional)</label>
+                <input type="email" id="reg-email" placeholder="jane@example.com" />
+                <span class="error-msg">Enter a valid email address.</span>
+              </div>
+              <div class="field full">
+                <label for="reg-address">Address</label>
+                <textarea id="reg-address" placeholder="Street, city, state, PIN"></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="reset" class="btn btn-ghost">Clear</button>
+              <button type="submit" class="btn btn-primary" id="registerBtn" style="width:auto;">
+                <span id="registerBtnLabel">Register patient</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card" id="patientsListCard">
+          <h3 id="patientsListHeading">Recently registered</h3>
+          <span class="card-sub" id="patientsListSub">Pulled live from the patients API.</span>
+          <div class="table-wrap"><table class="data-table" id="patientsTable">
+            <thead><tr><th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Blood</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+          <div class="empty-state" id="patientsEmpty" style="display:none;">
+            <div class="glyph">&#128100;</div>
+            No patients registered yet. Add the first one above.
+          </div>
+        </div>
+      </section>
+
+      <!-- SCHEDULE APPOINTMENT -->
+      <section class="panel" id="panel-schedule">
+        <div class="panel-header">
+          <div>
+            <h2 id="scheduleHeading">Schedule an appointment</h2>
+            <span class="desc" id="scheduleDesc">Books a visit via the appointment scheduling API and checks for doctor/slot conflicts.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="banner banner-error" id="scheduleBanner" role="alert"></div>
+          <form id="scheduleForm" novalidate>
+            <div class="form-grid">
+              <div class="field full" id="sch-patient-field">
+                <label for="sch-patient">Patient</label>
+                <select id="sch-patient">
+                  <option value="">Select a registered patient&hellip;</option>
+                </select>
+                <span class="error-msg">Please select a patient.</span>
+              </div>
+              <div class="field" id="sch-department-field">
+                <label for="sch-department">Department</label>
+                <select id="sch-department">
+                  <option value="">Select&hellip;</option>
+                  <option>Cardiology</option>
+                  <option>Orthopedics</option>
+                  <option>Pediatrics</option>
+                  <option>Dermatology</option>
+                  <option>General Medicine</option>
+                </select>
+                <span class="error-msg">Please select a department.</span>
+              </div>
+              <div class="field" id="sch-doctor-field">
+                <label for="sch-doctor">Doctor</label>
+                <select id="sch-doctor">
+                  <option value="">Select&hellip;</option>
+                  <option>Dr. Aditi Rao</option>
+                  <option>Dr. Vikram Shah</option>
+                  <option>Dr. Priya Menon</option>
+                  <option>Dr. Sam Thomas</option>
+                </select>
+                <span class="error-msg">Please select a doctor.</span>
+              </div>
+              <div class="field" id="sch-date-field">
+                <label for="sch-date">Date</label>
+                <input type="date" id="sch-date" />
+                <span class="error-msg">Choose today or a future date.</span>
+              </div>
+              <div class="field" id="sch-time-field">
+                <label for="sch-time">Time</label>
+                <select id="sch-time">
+                  <option value="">Select&hellip;</option>
+                  <option>09:00 AM</option><option>09:30 AM</option>
+                  <option>10:00 AM</option><option>10:30 AM</option>
+                  <option>11:00 AM</option><option>11:30 AM</option>
+                  <option>02:00 PM</option><option>02:30 PM</option>
+                  <option>03:00 PM</option><option>03:30 PM</option>
+                </select>
+                <span class="error-msg">Please select a time slot.</span>
+              </div>
+              <div class="field full">
+                <label for="sch-reason">Reason for visit</label>
+                <textarea id="sch-reason" placeholder="Brief description of the concern"></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="reset" class="btn btn-ghost">Clear</button>
+              <button type="submit" class="btn btn-accent" id="scheduleBtn" style="width:auto;">
+                <span id="scheduleBtnLabel">Schedule appointment</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- APPOINTMENTS LIST -->
+      <section class="panel" id="panel-appointments">
+        <div class="panel-header">
+          <div>
+            <h2 id="appointmentsHeading">Appointments</h2>
+            <span class="desc" id="appointmentsDesc">All scheduled visits, newest first.</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="refreshAppointments">Refresh</button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap"><table class="data-table" id="appointmentsTable">
+            <thead><tr><th>ID</th><th>Patient</th><th>Department</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+          <div class="empty-state" id="appointmentsEmpty" style="display:none;">
+            <div class="glyph">&#128197;</div>
+            No appointments scheduled yet.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script src="js/mockApi.js"></script>
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

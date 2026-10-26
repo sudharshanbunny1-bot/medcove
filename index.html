@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MedCove &mdash; Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<div class="login-shell">
+
+  <!-- Brand panel -->
+  <section class="login-brand" aria-hidden="true">
+    <span class="mark"><span class="mark-dot"></span> MedCove</span>
+    <h1>Hospital operations, kept calm and on schedule.</h1>
+    <p>Register patients and manage appointment slots from one clean, fast console built for front-desk and clinical staff.</p>
+
+    <svg class="pulse-line" viewBox="0 0 300 28" preserveAspectRatio="none">
+      <path d="M0 14 H100 L112 2 L124 26 L136 14 H300" />
+    </svg>
+
+    <div class="stats">
+      <div class="stat"><b>12</b><span>Departments online</span></div>
+      <div class="stat"><b>24/7</b><span>Front-desk access</span></div>
+      <div class="stat"><b>~2s</b><span>Avg. check-in time</span></div>
+    </div>
+  </section>
+
+  <!-- Login form -->
+  <section class="login-form-wrap">
+    <div class="login-card">
+      <h2>Welcome back</h2>
+      <span class="subtitle">Sign in to manage patients and appointments.</span>
+
+      <div class="banner banner-error" id="loginBanner" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field" id="emailField">
+          <label for="email">Username</label>
+          <div class="input-wrap">
+            <input type="text" id="email" name="username" autocomplete="username" placeholder="e.g. Doc@123" />
+          </div>
+          <span class="error-msg">Enter your username.</span>
+        </div>
+
+        <div class="field" id="passwordField">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Minimum 6 characters" />
+            <button type="button" class="toggle-visibility" id="togglePw">Show</button>
+          </div>
+          <span class="error-msg">Password must be at least 6 characters.</span>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="rememberMe" /> Keep me signed in on this device
+        </label>
+
+        <button type="submit" class="btn btn-primary" id="loginBtn">
+          <span id="loginBtnLabel">Sign in</span>
+        </button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script src="js/mockApi.js"></script>
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>
